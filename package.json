@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/tgaff/jspi/issues"
   },
-  "homepage": "https://github.com/tgaff/jspi#readme"
+  "homepage": "https://github.com/tgaff/jspi#readme",
+  "dependencies": {
+    "mocha": "^2.2.5"
+  }
 }
