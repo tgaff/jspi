@@ -22,15 +22,17 @@ describe('TopParent obj', function() {
   });
   it('has an objWithoutThisOrVar that we cant touch', function() {
     expect(child1.objWithoutThisOrVar).to.be.undefined;
+    expect(child1.getPrivate('objWithoutThisOrVar').x).to.equal('objWithoutThisOrVar');
   });
-  it('has a private objWithoutThis', function() {
+  it('has a private objWithoutThis (that we cant touch)', function() {
     expect(child1.objWithoutThis).to.be.undefined;
     expect(child1.getPrivate('objWithoutThis').x).to.equal('objWithoutThis');
   });
 
-  it('constructor obj is NOT shared', function() {
+  it('constructor objects are NOT shared', function() {
     child1.unSharedObj.x = 'asfd';
     expect(child2.unSharedObj.x).to.equal('shared');
+    expect(child1.unSharedObj.x).to.equal('asfd');
   });
   describe('getPrivate has a closure', function() {
     it('that includes the otherwise inaccessible\
@@ -45,6 +47,8 @@ describe('TopParent obj', function() {
 
 
 
+
+
   // singleton!
   it('objects on the prototype are shared', function() {
     child1.proto_y.a = 439;
@@ -56,19 +60,14 @@ describe('TopParent obj', function() {
     expect(child1.getPrivate).to.not.eql(child2.getPrivate);
   });
 
-  it('prototype variables are not? singleton', function() {
-    child1.shared_function(200);
-    child1.proto_x.should.equal(202);
-    expect(child2.proto_x).to.not.equal(202);
-  });
   it('plain vars on the prototype APPEAR to be not shared', function() {
     child1.proto_x = 439;
     expect(child2.proto_x).to.equal(1);
     expect(child1.proto_x).to.equal(439);
   });
   it('plain vars on the prototype are shared but if you try to alter them\
-     a new var is created on the object itself that supersedes the __proto__\
-     variant (how scary)', function() {
+     with "this" a new var is created on the object itself that supersedes\
+     the __proto__ variant (how scary)', function() {
     child1.proto_x = 439;
     expect(child1.proto_x).to.equal(439);
     expect(child2.proto_x).to.equal(1);
@@ -76,7 +75,11 @@ describe('TopParent obj', function() {
     expect(child2.hasOwnProperty('proto_x')).to.be.false;
     expect(child1.hasOwnProperty('proto_x')).to.be.true;
   });
-
+  it('plain vars on the prototype can be altered and are still shared \
+     when you alter them on the prototype', function() {
+    child1.__proto__.proto_x = 43;
+    child2.proto_x.should.equal(43);
+  });
 });
 
 
