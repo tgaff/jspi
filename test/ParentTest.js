@@ -35,11 +35,12 @@ describe('TopParent obj', function() {
     expect(child1.unSharedObj.x).to.equal('asfd');
   });
   describe('getPrivate has a closure', function() {
+    //technically we already showed this
     it('that includes the otherwise inaccessible\
        objWithoutThis from the constructor', function() {
       child1.getPrivate('objWithoutThis').x.should.equal('objWithoutThis');
     });
-    it('the closure is unique for each child', function() {
+    it('and is unique for each child', function() {
       child1.getPrivate('arg1').should.equal(1);
       child2.getPrivate('arg1').should.equal(2);
     });
@@ -60,7 +61,7 @@ describe('TopParent obj', function() {
     expect(child1.getPrivate).to.not.eql(child2.getPrivate);
   });
 
-  it('plain vars on the prototype APPEAR to be not shared', function() {
+  it('plain vars on the prototype _APPEAR_ to be not shared', function() {
     child1.proto_x = 439;
     expect(child2.proto_x).to.equal(1);
     expect(child1.proto_x).to.equal(439);
@@ -76,7 +77,8 @@ describe('TopParent obj', function() {
     expect(child1.hasOwnProperty('proto_x')).to.be.true;
   });
   it('plain vars on the prototype can be altered and are still shared \
-     when you alter them on the prototype', function() {
+     when you alter them on the prototype (note depends on engine)',
+     function() {
     child1.__proto__.proto_x = 43;
     child2.proto_x.should.equal(43);
   });
@@ -89,10 +91,10 @@ describe('TopParent obj', function() {
 
 describe('SubParent', function() {
   beforeEach(function() {
-    tp1 = new subject.TopParent('tp1');
-    tp2 = new subject.TopParent('tp2');
-    sp1 = new subject.SubParent('sp1');
     sp2 = new subject.SubParent('sp2');
+    sp1 = new subject.SubParent('sp1');
+    tp2 = new subject.TopParent('tp2');
+    tp1 = new subject.TopParent('tp1');
   });
   describe('defined on the sub-class', function() {
     it('has the instanceVar', function() {
@@ -139,7 +141,6 @@ describe('inheritance from TopParent', function() {
     sp2.unSharedObj.x = 'i was set by sp2';
 
     sp1.unSharedObj.x.should.equal('i was set by sp2');
-
   });
 
 
@@ -159,7 +160,7 @@ describe('inheritance from TopParent', function() {
       spv2b = new subject.SubParentV2();
     });
     it("true inheritance", function() {
-      // redemonstrate subparent's issue
+      // re-demonstrate subparent's issue
       //the subparent DOES have the issue
       sp1.unSharedObj.x = 'foo';
       sp1.unSharedObj.x.should.equal('foo');
@@ -168,7 +169,6 @@ describe('inheritance from TopParent', function() {
       spv2a.unSharedObj.x.should.equal('unshared');
       spv2b.unSharedObj.x = 'i was set by spv2b';
       spv2a.unSharedObj.x.should.equal('unshared');
-
     });
     // ABOVE shows that we cleared up the big problem.
     // Let's make sure the rest is still sane though:
@@ -191,5 +191,5 @@ describe('inheritance from TopParent', function() {
     });
 
 
-  }); // using Object.create with SubParentV2
+  }); // END using Object.create with SubParentV2
 });
