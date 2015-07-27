@@ -170,7 +170,26 @@ describe('inheritance from TopParent', function() {
       spv2a.unSharedObj.x.should.equal('unshared');
 
     });
-  });
+    // ABOVE shows that we cleared up the big problem.
+    // Let's make sure the rest is still sane though:
+    it('can access the same private Variables (from constructor)', function() {
+      tp1.getPrivate('objWithoutThis').x.should.equal('objWithoutThis');
+      spv2a.getPrivate('objWithoutThis').x.should.equal('objWithoutThis');
+      spv2b.getPrivate('objWithoutThis').x.should.equal('objWithoutThis');
+    });
+    it('can use the prototype method', function() {
+      tp1.sharedFunction(3);
+      spv2a.sharedFunction(10);
+      spv2b.sharedFunction(100);
+
+      // NOTE the validations here are a little dumb due to the weird
+      // overriding of __proto__.proto_x in TopParent
+      expect(spv2a.proto_x).to.equal(12);
+      expect(spv2b.proto_x).to.equal(102);
+
+      expect(tp1.proto_x).to.equal(5);
+    });
 
 
+  }); // using Object.create with SubParentV2
 });
